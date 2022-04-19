@@ -26,6 +26,7 @@ class MoviesAdapter: NSObject {
     
     private var mutableDidSelectItemAt = MutableObservable<Movie>()
     private var mutableDidSelectSearch = MutableObservable<Void>()
+    
 }
 
 // MARK: - UICollectionViewDataSource
@@ -40,6 +41,7 @@ extension MoviesAdapter: UICollectionViewDataSource {
         cell.configure(with: movieList[indexPath.row])
         return cell
     }
+    
 }
 
 // MARK: - UICollectionViewDelegate
@@ -48,6 +50,7 @@ extension MoviesAdapter: UICollectionViewDelegate {
         collectionView.deselectItem(at: indexPath, animated: true)
         mutableDidSelectItemAt.postValue(movieList[indexPath.row])
     }
+    
 }
 
 // MARK: - UICollectionViewDelegate
@@ -56,4 +59,5 @@ extension MoviesAdapter: UITextFieldDelegate {
         mutableDidSelectSearch.postValue(())
         return true
     }
+    
 }

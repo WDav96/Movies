@@ -9,6 +9,7 @@ import Foundation
 
 struct MovieResult: Codable {
     let Search: [Movie]
+    
 }
 
 struct Movie: Codable {
@@ -21,4 +22,5 @@ struct Movie: Codable {
     private enum CodingKeys: String, CodingKey {
         case Title, Year, imdbID, _Type = "Type", Poster
     }
+    
 }

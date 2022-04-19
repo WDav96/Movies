@@ -71,7 +71,7 @@ class ViewController: UIViewController {
         }
     }
     
-    private func movieDetail(indexPath: IndexPath){
+    private func movieDetail(indexPath: IndexPath) {
         let url = "https://www.imdb.com/title/\(movieList[indexPath.row].imdbID ?? "")/"
         let vc = SFSafariViewController(url: URL(string: url)!)
         present(vc, animated: true)
@@ -103,4 +103,5 @@ class ViewController: UIViewController {
                 }
         }
     }
+    
 }

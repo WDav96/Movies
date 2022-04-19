@@ -10,6 +10,7 @@ import Foundation
 enum ViewModelOutput {
     case updateMoviesArray(Data)
     case refreshTableView
+    
 }
 
 class ViewModel {
@@ -46,4 +47,5 @@ class ViewModel {
         })
         .resume()
     }
+    
 }
