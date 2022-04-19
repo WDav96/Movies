@@ -8,13 +8,15 @@
 import UIKit
 import SafariServices
 
-class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UITextFieldDelegate {
+class ViewController: UIViewController {
     
     // MARK: - IBOutlets
+    
     @IBOutlet private var collectionView: UICollectionView!
     @IBOutlet private var textField: UITextField!
 
     // MARK: - Internal Properties
+    
     var movieList = [Movie]()
     var viewmodel = ViewModel()
     
@@ -22,58 +24,57 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         get { textField.text }
         set { textField.text = newValue }
     }
+    
+    // MARK: - Private Properties
+    
+    private var adapter = MoviesAdapter()
  
     // MARK: - Lifecycle ViewController Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.register(MyCollectionViewCell.nib(), forCellWithReuseIdentifier: MyCollectionViewCell.identifier)
-        
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        textField.delegate = self
+        setCollectionViewDelegates(adapter, adapter)
+        setTextFieldDelegate(adapter)
         setupBindigs()
     }
     
     // MARK: Internal Methods
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        searchMovies()
-        return true
+    func setCollectionViewDelegates(_ delegate: UICollectionViewDelegate, _ datasource: UICollectionViewDataSource) {
+        let _ = delegate
+        let _ = datasource
     }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return movieList.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyCollectionViewCell.identifier, for: indexPath) as! MyCollectionViewCell
-        cell.configure(with: movieList[indexPath.row])
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        collectionView.deselectItem(at: indexPath, animated: true)
-        
-        let url = "https://www.imdb.com/title/\(movieList[indexPath.row].imdbID ?? "")/"
-        let vc = SFSafariViewController(url: URL(string: url)!)
-        present(vc, animated: true)
-    }
-    
-    func searchMovies() {
-        textField.resignFirstResponder()
-        
-        viewmodel.fetchMovies(textFieldText: textField.text, movieList: movieList)
-        
-        movieList.removeAll()
-        
+    func setTextFieldDelegate(_ delegate: UITextFieldDelegate) {
+        let _ = delegate
     }
     
     // MARK: - Private Methods
+    
+    private func searchMovies() {
+        textField.resignFirstResponder()
+        viewmodel.fetchMovies(textFieldText: textField.text, movieList: movieList)
+        movieList.removeAll()
+    }
     
     private func setupBindigs() {
         viewmodel.outputEvents.observe { [weak self] event in
             self?.validateEvents(event: event)
         }
+        adapter.didSelectSearch.observe { [weak self] in
+            self?.searchMovies()
+        }
+        adapter.didSelectItemAt.observe { [weak self] movie in
+            // TODO: - Pass the indexPath
+            //self?.movieDetail(indexPath: )
+        }
+    }
+    
+    private func movieDetail(indexPath: IndexPath){
+        let url = "https://www.imdb.com/title/\(movieList[indexPath.row].imdbID ?? "")/"
+        let vc = SFSafariViewController(url: URL(string: url)!)
+        present(vc, animated: true)
     }
     
     private func validateEvents(event: ViewModelOutput) {
